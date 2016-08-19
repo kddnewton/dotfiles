@@ -1,0 +1,10 @@
+[user]
+	email = kevin.deisz@gmail.com
+	name = Kevin Deisz
+[alias]
+	s = status
+	b = branch
+	c = checkout
+
+[push]
+	default = simple
