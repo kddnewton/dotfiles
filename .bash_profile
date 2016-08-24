@@ -1,5 +1,5 @@
-# docker cleanup - remove old images and containers
-dc () {
+# docker clean - remove old images and containers
+dcl () {
   docker images | grep "<none>" | awk '{print $3}' | xargs -n 1 docker rmi -f
   docker ps -a | awk '{print $1}' | tail -n +2 | xargs -n 1 docker rm -f
 }
