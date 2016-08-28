@@ -45,7 +45,7 @@ gp () {
 
 # png - build a PNG from the given text
 png () {
-  echo "$1" | convert label:@- a.png
+ echo "$1" | convert label:@- a.png
 }
 
 
@@ -64,6 +64,7 @@ if [ -f `brew --prefix`/etc/bash_completion ]; then
 fi
 
 # rbenv config
+export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 # load nvm

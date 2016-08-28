@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cp $(ls -A | grep '^\.' | grep -v '^.git$') ~/
+cp $(ls -A | grep '^\.' | grep -v '^.git$') $HOME
