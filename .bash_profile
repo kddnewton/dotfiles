@@ -43,6 +43,12 @@ gp () {
   open "https://github.com/${BASH_REMATCH[1]}/compare/$branch?expand=1"
 }
 
+# png - build a PNG from the given text
+png () {
+  echo "$1" | convert label:@- a.png
+}
+
+
 TIMESTAMP='\[\e[0;35m\][\t] '
 USER_NAME='\[\e[0;31m\]\u '
 LOCATION='\[\e[0;32m\]\w'
