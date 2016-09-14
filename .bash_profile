@@ -19,8 +19,9 @@ gb () {
 
 # git clean - remove local branches that have been merged remotely
 gcl () {
+  [ -z "$1" ] && DEL="-d" || DEL="$1"
   git fetch --prune
-  git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
+  git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch $DEL
 }
 
 # gif - convert a quicktime movie into a gif
