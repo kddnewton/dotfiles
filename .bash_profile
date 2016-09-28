@@ -30,8 +30,7 @@ gif() {
     return
   fi
   gif_name=`echo "$1" | perl -p -e 's/\.(mov|mp4)$/\.gif/g'`
-  ffmpeg -i "$1" -r 10 -f image2pipe -vcodec ppm - |\
-    convert -delay 5 -layers Optimize -loop 0 - "$gif_name"
+  ffmpeg -i "$1" -r 10 -f image2pipe -vcodec ppm - | convert -delay 5 -layers Optimize -loop 0 - "$gif_name"
 }
 
 # github push - push the current branch and then open a browser window with the PR page open
