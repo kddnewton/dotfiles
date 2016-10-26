@@ -4,14 +4,6 @@ dcl () {
   docker ps -a | awk '{print $1}' | tail -n +2 | xargs -n 1 docker rm -f
 }
 
-# docker-env - start the default docker machine and evaluate the env
-de () {
-  if [[ $(docker-machine status default) == 'Stopped' ]]; then
-    docker-machine start default
-  fi
-  eval $(docker-machine env default)
-}
-
 # git branch - get the current branch of the working directory
 gb () {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/@\1 /'
