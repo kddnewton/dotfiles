@@ -1,6 +1,7 @@
 [user]
 	email = kevin.deisz@gmail.com
 	name = Kevin Deisz
+	signingkey = D78C2D8FB232C59C
 [alias]
 	s = status
 	b = branch
