@@ -9,3 +9,5 @@
 	snip = "!git ls-files -o | xargs -n 1 rm"
 [push]
 	default = simple
+[commit]
+	gpgsign = true
