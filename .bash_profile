@@ -77,4 +77,4 @@ if [ -S "${GPG_AGENT_INFO%%:*}" ]; then
 else
   eval $(gpg-agent --daemon --write-env-file ~/.gpg-agent-info)
 fi
-
+export GPG_TTY=$(tty)
