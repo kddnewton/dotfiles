@@ -13,7 +13,7 @@ gb () {
 gcl () {
   [ -z "$1" ] && DEL="-D" || DEL="$1"
   git fetch --prune
-  git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch $DEL
+  git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch "$DEL"
 }
 
 # gif - convert a quicktime movie into a gif
@@ -21,7 +21,7 @@ gif() {
   if [ -z "$1" ]; then
     return
   fi
-  gif_name=`echo "$1" | perl -p -e 's/\.(mov|mp4)$/\.gif/g'`
+  gif_name=$(echo "$1" | perl -p -e 's/\.(mov|mp4)$/\.gif/g')
   ffmpeg -i "$1" -r 10 -f image2pipe -vcodec ppm - | convert -delay 5 -layers Optimize -loop 0 - "$gif_name"
 }
 
@@ -31,7 +31,7 @@ gp () {
   regex="github\.com:(.*)\.git"
   [[ "$(git remote -v | grep push)" =~ $regex ]]
 
-  git push -u origin $branch
+  git push -u origin "$branch"
   open "https://github.com/${BASH_REMATCH[1]}/compare/$branch?expand=1"
 }
 
@@ -40,19 +40,18 @@ png () {
  echo "$1" | convert label:@- a.png
 }
 
-
 TIMESTAMP='\[\e[0;35m\][\t] '
 USER_NAME='\[\e[0;31m\]\u '
 LOCATION='\[\e[0;32m\]\w'
-GIT_BRANCH=' \[\e[0;34m\]$(gb)\[\e[0m\]'
+GIT_BRANCH=" \[\e[0;34m\]$(gb)\[\e[0m\]"
 export PS1="$TIMESTAMP$USER_NAME$LOCATION$GIT_BRANCH$ "
 
 alias npm-exec='PATH=$(npm bin):$PATH'
 alias be='bundle exec'
 
 # git auto-completion
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-  . `brew --prefix`/etc/bash_completion
+if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
+  . "$(brew --prefix)/etc/bash_completion"
 fi
 
 # rbenv config
@@ -70,11 +69,13 @@ export CLICOLOR=1
 export GOPATH=/usr/local/opt/go/bin
 export PATH=$GOPATH/bin:$PATH:/usr/local/opt/go/libexec/bin
 
-# start gpg-agent
-[ -f ~/.gpg-agent-info ] && source ~/.gpg-agent-info
+# start gpg-agent and set tty
+[ -f ~/.gpg-agent-info ] && . ~/.gpg-agent-info
 if [ -S "${GPG_AGENT_INFO%%:*}" ]; then
   export GPG_AGENT_INFO
 else
-  eval $(gpg-agent --daemon --write-env-file ~/.gpg-agent-info)
+  eval "$(gpg-agent --daemon --write-env-file ~/.gpg-agent-info)"
 fi
-export GPG_TTY=$(tty)
+
+tty_loc=$(tty)
+export GPG_TTY=$tty_loc
