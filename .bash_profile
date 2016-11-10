@@ -43,7 +43,7 @@ png () {
 TIMESTAMP='\[\e[0;35m\][\t] '
 USER_NAME='\[\e[0;31m\]\u '
 LOCATION='\[\e[0;32m\]\w'
-GIT_BRANCH=" \[\e[0;34m\]$(gb)\[\e[0m\]"
+GIT_BRANCH=' \[\e[0;34m\]$(gb)\[\e[0m\]'
 export PS1="$TIMESTAMP$USER_NAME$LOCATION$GIT_BRANCH$ "
 
 alias npm-exec='PATH=$(npm bin):$PATH'
