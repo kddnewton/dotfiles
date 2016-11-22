@@ -88,3 +88,6 @@ fi
 
 tty_loc=$(tty)
 export GPG_TTY=$tty_loc
+
+# properly configure java 8
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
