@@ -1,3 +1,11 @@
+# quick directory traversal
+.. () {
+  cd ..
+  for dir in "$@"; do
+    cd "$dir"
+  done
+}
+
 # docker clean - remove old images and containers
 dcl () {
   docker images | grep "<none>" | awk '{print $3}' | xargs -n 1 docker rmi -f
