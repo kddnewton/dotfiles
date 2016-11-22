@@ -33,7 +33,8 @@ gif() {
   ffmpeg -i "$1" -r 10 -f image2pipe -vcodec ppm - | convert -delay 5 -layers Optimize -loop 0 - "$gif_name"
 }
 
-# github push - push the current branch and then open a browser window with the PR page open
+# github push - push the current branch and then open a browser window with the
+# PR page open
 gp () {
   branch="$(git rev-parse --abbrev-ref HEAD)"
   regex="github\.com:(.*)\.git"
