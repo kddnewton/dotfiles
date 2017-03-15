@@ -6,6 +6,33 @@
   done
 }
 
+# artifactory push - push gems to artifactory and git tag
+ap () {
+  ([ -z "$1" ] || [ -z "$2" ]) && echo 'USAGE ap [USER] [PASS]' && return
+  set -e
+
+  ARTIFACTORY_USER=$1
+  ARTIFACTORY_PASSWORD=$2
+  GEM_HOST=localytics.artifactoryonline.com/localytics/api/gems/ruby-gems-local
+
+  [[ "$(bundle exec rake -T | grep release)" =~ tag\ (.+)\ and\ build\ and\ push\ (.+)\ to ]]
+  TAG_NAME=${BASH_REMATCH[1]}
+  PKG_FILE=${BASH_REMATCH[2]}
+
+  bundle exec rake build
+  touch ~/.gem/credentials
+  mv ~/.gem/credentials ~/.gem/credentials.bak
+
+  curl https://${GEM_HOST}/api/v1/api_key.yaml -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} > ~/.gem/credentials
+  chmod 0600 ~/.gem/credentials
+
+  gem push "pkg/$PKG_FILE" --host "https://$GEM_HOST"
+  git tag -a "$TAG_NAME" -m "$TAG_NAME"
+  git push origin "$TAG_NAME"
+
+  mv ~/.gem/credentials.bak ~/.gem/credentials
+}
+
 # docker clean - remove old images and containers
 dcl () {
   docker images | grep "<none>" | awk '{print $3}' | xargs -n 1 docker rmi -f
@@ -91,3 +118,6 @@ export GPG_TTY=$tty_loc
 
 # properly configure java 8
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+
+# ensure EDITOR is set for various tools (namely bundler)
+export EDITOR=mate
