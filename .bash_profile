@@ -6,33 +6,6 @@
   done
 }
 
-# artifactory push - push gems to artifactory and git tag
-ap () {
-  ([ -z "$1" ] || [ -z "$2" ]) && echo 'USAGE ap [USER] [PASS]' && return
-  set -e
-
-  ARTIFACTORY_USER=$1
-  ARTIFACTORY_PASSWORD=$2
-  GEM_HOST=localytics.artifactoryonline.com/localytics/api/gems/ruby-gems-local
-
-  [[ "$(bundle exec rake -T | grep release)" =~ tag\ (.+)\ and\ build\ and\ push\ (.+)\ to ]]
-  TAG_NAME=${BASH_REMATCH[1]}
-  PKG_FILE=${BASH_REMATCH[2]}
-
-  bundle exec rake build
-  touch ~/.gem/credentials
-  mv ~/.gem/credentials ~/.gem/credentials.bak
-
-  curl https://${GEM_HOST}/api/v1/api_key.yaml -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} > ~/.gem/credentials
-  chmod 0600 ~/.gem/credentials
-
-  gem push "pkg/$PKG_FILE" --host "https://$GEM_HOST"
-  git tag -a "$TAG_NAME" -m "$TAG_NAME"
-  git push origin "$TAG_NAME"
-
-  mv ~/.gem/credentials.bak ~/.gem/credentials
-}
-
 # docker clean - remove old images and containers
 dcl () {
   docker images | grep "<none>" | awk '{print $3}' | xargs -n 1 docker rmi -f
@@ -76,12 +49,6 @@ png () {
  echo "$1" | convert label:@- a.png
 }
 
-TIMESTAMP='\[\e[0;35m\][\t] '
-USER_NAME='\[\e[0;31m\]\u '
-LOCATION='\[\e[0;32m\]\w'
-GIT_BRANCH=' \[\e[0;34m\]$(gb)\[\e[0m\]'
-export PS1="$TIMESTAMP$USER_NAME$LOCATION$GIT_BRANCH$ "
-
 alias npm-exec='PATH=$(npm bin):$PATH'
 alias be='bundle exec'
 
@@ -89,6 +56,9 @@ alias be='bundle exec'
 if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
   . "$(brew --prefix)/etc/bash_completion"
 fi
+
+# terminal display
+export PS1="\[\e[0;35m\][\t] \[\e[0;31m\]\u \[\e[0;32m\]\w \[\e[0;34m\]$(gb)\[\e[0m\]$ "
 
 # rbenv config
 export PATH="$HOME/.rbenv/bin:$PATH"
@@ -105,19 +75,15 @@ export CLICOLOR=1
 export GOPATH=/usr/local/opt/go/bin
 export PATH=$GOPATH/bin:$PATH:/usr/local/opt/go/libexec/bin
 
-# start gpg-agent and set tty
-[ -f ~/.gpg-agent-info ] && . ~/.gpg-agent-info
-if [ -S "${GPG_AGENT_INFO%%:*}" ]; then
-  export GPG_AGENT_INFO
-else
-  eval "$(gpg-agent --daemon --write-env-file ~/.gpg-agent-info)"
-fi
-
-tty_loc=$(tty)
-export GPG_TTY=$tty_loc
-
 # properly configure java 8
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 
-# ensure EDITOR is set for various tools (namely bundler)
-export EDITOR=mate
+# configure android home
+export ANDROID_HOME=~/Library/Android/sdk/
+export PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH
+
+# set up GPG interface
+export GPG_TTY=$(tty)
+
+# set up bundler editor
+export BUNDLER_EDITOR=mate

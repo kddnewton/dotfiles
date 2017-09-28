@@ -3,10 +3,12 @@
 	name = Kevin Deisz
 	signingkey = D78C2D8FB232C59C
 [alias]
-	s = status
 	b = branch
 	c = checkout
+	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --graph
+	s = status
 	snip = "!git ls-files -o | xargs -n 1 rm"
+	su = submodule update .
 [push]
 	default = simple
 [commit]
