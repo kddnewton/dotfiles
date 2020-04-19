@@ -9,7 +9,11 @@
 	s = status
 	snip = "!git ls-files -o | xargs -n 1 rm"
 	su = submodule update .
-[push]
-	default = simple
 [commit]
 	gpgsign = true
+[help]
+	autocorrect = 1
+[push]
+	default = simple
+[submodule]
+	recurse = true
