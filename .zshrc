@@ -29,7 +29,7 @@ gcl () {
 gp () {
   local branch="$(git rev-parse --abbrev-ref HEAD)"
   local regex="github\.com:(.*)\.git"
-  [[ "$(git remote -v | grep push)" =~ $regex ]]
+  [[ "$(git remote -v | grep push | grep origin)" =~ $regex ]]
 
   git push -u origin "$branch"
   open "https://github.com/${match[1]}/compare/$branch?expand=1"
