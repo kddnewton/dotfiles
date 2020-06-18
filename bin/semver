@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+PACKAGE = Dir.getwd.split('/')[-2..-1].join('/')
+
+contents = File.read('CHANGELOG.md')
+versions = contents.scan(/^## \[(\d+\.\d+\.\d+)\]/).map(&:first)
+first_sha = `git rev-list --max-parents=0 HEAD`[0...6]
+
+links = "[unreleased]: https://github.com/#{PACKAGE}/compare/v#{versions.first}...HEAD\n"
+links << versions.each_cons(2).map { |(to, from)| "[#{to}]: https://github.com/#{PACKAGE}/compare/v#{from}...v#{to}\n" }.join
+links << "[#{versions.last}]: https://github.com/#{PACKAGE}/compare/#{first_sha}...v#{versions.last}\n"
+
+File.write('CHANGELOG.md', contents.gsub(/\[unreleased\]:.+/m, links))

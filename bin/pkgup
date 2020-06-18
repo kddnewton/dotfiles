@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+const { exec } = require("child_process");
+const fs = require("fs");
+
+const packageDef = JSON.parse(fs.readFileSync("package.json", "utf8"));
+
+exec("yarn outdated", (error, stdout, stderr) => {
+  const lines = stdout.split("\n");
+
+  for (let idx = 6; idx < lines.length - 2; idx += 1) {
+    const [name, _c, _w, latest, type, _u] = lines[idx].split(/\s+/);
+    const normalType = type === "resolutionDependencies" ? "resolutions" : type;
+
+    packageDef[normalType][name] = `^${latest}`;
+  }
+
+  const updated = JSON.stringify(packageDef, null, 2);
+  fs.writeFileSync("package.json", `${updated}\n`);
+});

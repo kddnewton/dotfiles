@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+require 'bundler'
+
+specs = Bundler.definition.resolve
+dependencies =
+  Bundler.load.dependencies.to_h do |dependency|
+    [dependency.name, dependency]
+  end
+
+definition = Bundler.definition(true)
+definition.resolve_remotely!
+
+updates = {}
+
+specs.sort_by(&:name).each do |spec|
+  dependency = dependencies[spec.name]
+  next if !dependency || !dependency.specific?
+
+  indexed_specs = definition.find_indexed_specs(spec)
+
+  if !spec.version.prerelease? && indexed_specs.size > 1
+    indexed_specs.reject! do |indexed_spec|
+      indexed_spec.respond_to?(:version) && indexed_spec.version.prerelease?
+    end
+  end
+
+  indexed_spec = indexed_specs.last
+  outdated =
+    Gem::Version.new(indexed_spec.version) > Gem::Version.new(spec.version)
+  next unless outdated || (spec.git_version != indexed_spec.git_version)
+
+  updates[spec.name] = indexed_spec.version
+end
+
+content =
+  File.read('Gemfile').gsub(/gem '([a-z0-9\-_]+)', '~> ([\d\.]+)'/) do
+    version = (updates[$1] || Gem::Version.new($2)).segments[0..1].join('.')
+    "gem '#{$1}', '~> #{version}'"
+  end
+
+File.write('Gemfile', content)
+
+exec('bundle update')

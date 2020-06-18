@@ -1,5 +1,0 @@
-#!/bin/bash
-
-for file in $(comm -12 <(ls -A $HOME | grep '^\.') <(ls -A | grep '^\.' | grep -v '^.git$')); do
-  cp "$HOME/$file" .
-done
