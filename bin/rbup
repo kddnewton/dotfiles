@@ -34,11 +34,23 @@ specs.sort_by(&:name).each do |spec|
 end
 
 content =
-  File.read('Gemfile').gsub(/gem '([a-z0-9\-_]+)', '~> ([\d\.]+)'/) do
+  File.read('Gemfile').gsub(/^gem '([a-z0-9\-_]+)', '~> ([\d\.]+)'/) do
     version = (updates[$1] || Gem::Version.new($2)).segments[0..1].join('.')
     "gem '#{$1}', '~> #{version}'"
   end
 
 File.write('Gemfile', content)
+
+filepath = Dir['*.gemspec'].first
+
+if filepath
+  content =
+    File.read(filepath).gsub(/^  spec\.add_(development_)?dependency '([a-z0-9\-_]+)', '~> ([\d\.]+)'/) do
+      version = (updates[$2] || Gem::Version.new($3)).segments[0..1].join('.')
+      "  spec.add_#{$1}dependency '#{$2}', '~> #{version}'"
+    end
+
+  File.write(filepath, content)
+end
 
 exec('bundle update')

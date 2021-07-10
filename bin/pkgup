@@ -12,7 +12,9 @@ exec("yarn outdated", (error, stdout, stderr) => {
     const [name, _c, _w, latest, type, _u] = lines[idx].split(/\s+/);
     const normalType = type === "resolutionDependencies" ? "resolutions" : type;
 
-    packageDef[normalType][name] = `^${latest}`;
+    if (packageDef[normalType]) {
+      packageDef[normalType][name] = `^${latest}`;
+    }
   }
 
   const updated = JSON.stringify(packageDef, null, 2);
