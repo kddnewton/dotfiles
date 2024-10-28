@@ -20,7 +20,7 @@ export GPG_TTY="$(tty)"
 export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
 export PATH="/Users/kddnewton/src/github.com/kddnewton/dotfiles/bin:$PATH"
 
-chruby 3.2.0
+chruby 3.3.5
 
 # docker clean - remove old images and containers
 dcl() {
